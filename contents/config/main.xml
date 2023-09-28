@@ -39,6 +39,10 @@
       <label>Whether the widget displays in a single row, or follows Plasma's configuration.</label>
       <default>false</default>
     </entry>
+    <entry name="indicatorStyle" type="Enum">
+      <label>Whether to use the same indicator for all workspaces, or a custom one for each one.</label>
+      <default>0</default>
+    </entry>
     <entry name="dotSize" type="Enum">
       <label>Choose whether the indicator dot size uses theme default, scales with panel size, or a fixed custom size.</label>
       <default>0</default>
@@ -58,6 +62,18 @@
     <entry name="inactiveDot" type="string">
       <label>The unicode character used for the inactive desktop indicator</label>
       <default>○</default>
+    </entry>
+    <entry name="tagsString" type="string">
+      <label>A string containing the tags to be used, separated by commas.</label>
+      <default>1,2,3,4,5,6,7,8,9</default>
+    </entry>
+    <entry name="tagsPadding" type="int">
+      <label>Amount of padding for tags</label>
+      <default>0</default>
+    </entry>
+    <entry name="dimVacantTags" type="Bool">
+      <label>Whether to dim the text color for vacant tags.</label>
+      <default>false</default>
     </entry>
   </group>
 </kcfg>

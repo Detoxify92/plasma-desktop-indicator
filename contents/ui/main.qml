@@ -45,9 +45,19 @@ GridLayout {
         pagerType: PagerModel.VirtualDesktops
     }
 
+    property var tags: {
+	    var splittedTags = Plasmoid.configuration.tagsString.split(",");
+	    if (splittedTags.length != pagerModel.count){
+            for (var i = splittedTags.length + 1; i <= pagerModel.count; i++) {
+                splittedTags.push(i);
+            }
+	    }
+        return splittedTags;
+    }
+
     Repeater {
         id: indicatorRepeater
-        model: pagerModel.count
+        model: pagerModel
 
         Rectangle {
             id: indicatorContainer
@@ -56,12 +66,17 @@ GridLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumWidth: {
-                if (Plasmoid.configuration.dotSize == 0) {
-                    return PlasmaCore.Theme.defaultFont.pixelSize;
-                } else if (Plasmoid.configuration.dotSize == 1) {
-                    return indicatorDot.font.pixelSize;
-                } else {
-                    return Plasmoid.configuration.dotSizeCustom;
+                if (Plasmoid.configuration.indicatorStyle == 0) {
+                    if (Plasmoid.configuration.dotSize == 0) {
+                        return PlasmaCore.Theme.defaultFont.pixelSize;
+                    } else if (Plasmoid.configuration.dotSize == 1) {
+                        return indicatorDot.font.pixelSize;
+                    } else {
+                        return Plasmoid.configuration.dotSizeCustom;
+                    }
+                }
+                else {
+                    return PlasmaCore.Theme.defaultFont.pixelSize + Plasmoid.configuration.tagsPadding;
                 }
             }
             Layout.minimumHeight: {
@@ -178,19 +193,45 @@ GridLayout {
                         return Plasmoid.configuration.dotSizeCustom;
                     }
                 }
+                color: {
+                    if (Plasmoid.configuration.indicatorStyle == 1){
+                        if (index == pagerModel.currentPage) {
+                            return PlasmaCore.Theme.highlightColor;
+                        } 
+                        else
+                            if (Plasmoid.configuration.dimVacantTags) {
+                                return PlasmaCore.Theme.disabledTextColor;
+                            }
+                            else
+                                return PlasmaCore.Theme.textColor;
+                    }
+                    else
+                        return PlasmaCore.Theme.textColor;
+                }
                 text: {
-                    if (Plasmoid.configuration.dotType == 0) {
-                        if (index == pagerModel.currentPage) {
-                            return "●";
+                    if (Plasmoid.configuration.indicatorStyle == 0) {
+                        if (Plasmoid.configuration.dotType == 0) {
+                            if (index == pagerModel.currentPage) {
+                                return "●";
+                            } else {
+                                return "○";
+                            }
                         } else {
-                            return "○";
+                            if (index == pagerModel.currentPage) {
+                                return Plasmoid.configuration.activeDot;
+                            } else {
+                                return Plasmoid.configuration.inactiveDot;
+                            }
                         }
-                    } else {
-                        if (index == pagerModel.currentPage) {
-                            return Plasmoid.configuration.activeDot;
-                        } else {
-                            return Plasmoid.configuration.inactiveDot;
-                        }
+                    }
+                    else {
+                        //console.log("tasks: ", pagerModel.TasksModel);
+                        //if (model.TasksModel.count > 0)
+                        //    return tags[index];
+                        //else {
+		    	        //    return "a";
+                        //}
+                            return tags[index];
                     }
                 }
                 MouseArea {

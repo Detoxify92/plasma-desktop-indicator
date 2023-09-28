@@ -22,6 +22,7 @@ QtLayouts.ColumnLayout {
 
     property alias cfg_desktopWrapOn: desktopWrapOn.checked
     property alias cfg_singleRow: singleRow.checked
+    property alias cfg_indicatorStyle: indicatorStyle.currentIndex
 
     property alias cfg_dotSize: dotSize.currentIndex
     property alias cfg_dotSizeCustom: dotSizeCustom.value
@@ -29,6 +30,10 @@ QtLayouts.ColumnLayout {
     property alias cfg_dotType: dotType.currentIndex
     property alias cfg_activeDot: activeDot.text
     property alias cfg_inactiveDot: inactiveDot.text
+
+    property alias cfg_tagsString: tagsString.text
+    property alias cfg_tagsPadding: tagsPadding.value
+    property alias cfg_dimVacantTags: dimVacantTags.checked
 
     Kirigami.FormLayout {
         QtLayouts.Layout.fillWidth: true
@@ -113,7 +118,21 @@ QtLayouts.ColumnLayout {
         }
 
         QtLayouts.RowLayout {
+            Kirigami.FormData.label: i18n("Style:")
+            
+            QC2.ComboBox {
+                id: indicatorStyle
+                model: [
+                    i18n("Dots"),
+                    i18n("Tags"),
+                ]
+                onActivated: cfg_indicatorStyle = currentIndex
+            }
+        }
+
+        QtLayouts.RowLayout {
             Kirigami.FormData.label: i18n("Indicator Dot Size:")
+            visible: indicatorStyle.currentIndex == 0
 
             QC2.ComboBox {
                 id: dotSize
@@ -142,6 +161,7 @@ QtLayouts.ColumnLayout {
             id: dotCharGrid
             columns: 3
             QtLayouts.Layout.fillWidth: true
+            visible: indicatorStyle.currentIndex == 0
 
             Kirigami.FormData.label: i18n("Indicator Dot Type:")
             Kirigami.FormData.buddyFor: dotType
@@ -190,6 +210,40 @@ QtLayouts.ColumnLayout {
                 horizontalAlignment: TextInput.AlignHCenter
                 visible: dotType.currentIndex == 1
             }         
+        }
+
+        QtLayouts.RowLayout {
+            Kirigami.FormData.label: i18n("Tags:")
+            visible: indicatorStyle.currentIndex == 1
+            
+            QC2.TextField {
+                id: tagsString
+                text: Plasmoid.configuration.tagsString
+                horizontalAlignment: TextInput.AlignLeft
+            }        
+        }
+
+        QtLayouts.RowLayout {
+            Kirigami.FormData.label: i18n("Padding:")
+            visible: indicatorStyle.currentIndex == 1
+            
+            QC2.SpinBox {
+                id: tagsPadding
+                textFromValue: function(value) {
+                    return i18n("%1 px", value)
+                }
+                valueFromText: function(text) {
+                    return parseInt(text)
+                }
+                from: 0
+                to: 72
+            }
+        }
+
+        QC2.CheckBox {
+            id: dimVacantTags
+            visible: indicatorStyle.currentIndex == 1
+            text: i18n("Dim vacant tags")
         }
     }
 
